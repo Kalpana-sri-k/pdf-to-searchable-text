@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PDF → Searchable Knowledge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="hero-header">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <center>PDF → Searchable Knowledge</center>
+                </h1>
+                <p class="hero-subtitle">
+                    <center>Upload PDFs, extract text & images, and search captions or paragraphs.</center>
+                </p>
+            </div>
+        </header>
+
+        <main class="main-card">
+            <section class="section upload-section">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload PDFs</h3>
+                <div id="dropArea" class="drop-area">
+                    <div class="upload-icon-wrapper">
+                        <i class="fas fa-file-pdf upload-icon"></i>
+                    </div>
+                    <p>Drag & drop PDFs here or click Browse</p>
+                    <button id="browseBtn" class="btn secondary-btn">
+                        <i class="fas fa-folder-open"></i> Browse
+                    </button>
+                    <input id="fileInput" type="file" accept="application/pdf" multiple hidden />
+                </div>
+                <div id="fileList" class="file-list"></div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressBar" class="progress"></div>
+                    </div>
+                    <div id="statusIndicator" class="status-indicator"></div>
+                </div>
+                <div style="margin-top:12px;">
+                    <button id="processBtn" class="btn primary-btn" disabled>
+                        <i class="fas fa-magic"></i> Process PDFs
+                    </button>
+                </div>
+            </section>
+
+            <section id="processedStats" class="section stats-section" style="display:none;">
+                <h3><i class="fas fa-chart-line"></i> Extraction Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-circle pages-circle">
+                            <span id="totalPages">0</span>
+                        </div>
+                        <p>Pages</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-circle chars-circle">
+                            <span id="totalChars">0</span>
+                        </div>
+                        <p>Characters</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-circle images-circle">
+                            <span id="totalImages">0</span>
+                        </div>
+                        <p>Images</p>
+                    </div>
+                </div>
+                <div class="full-width toc-item">
+                    <h4>Table of Contents</h4>
+                    <div id="toc" class="toc-content"></div>
+                </div>
+            </section>
+
+            <section class="section search-section">
+                <h3><i class="fas fa-search"></i> Search</h3>
+                <div class="search-input-wrapper">
+                    <input id="searchInput" placeholder="Search by keyword (e.g., 'acknowledgement' or 'Figure 1')" />
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
