@@ -1,90 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>PDF → Searchable Knowledge</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF-Searchable Knowledge</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --sidebar-bg: #1e293b;
+            --main-bg: #f1f5f9;
+            --card: #ffffff;
+            --text-main: #0f172a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--main-bg); height: 100vh; display: flex; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 300px; background: var(--sidebar-bg); color: white; padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; }
+        .logo { font-size: 22px; font-weight: 800; color: #818cf8; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .upload-section { background: #334155; padding: 20px; border-radius: 12px; border: 2px dashed #475569; text-align: center; }
+        .btn-upload { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        
+        /* Stats Dashboard */
+        .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
+        .stat-card span { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; }
+        .stat-card b { font-size: 18px; color: var(--primary); }
+
+        /* Workspace */
+        .workspace { flex: 1; display: flex; flex-direction: column; padding: 25px; overflow: hidden; }
+        .search-bar { width: 100%; background: white; border-radius: 12px; padding: 5px 20px; display: flex; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .search-bar input { flex: 1; border: none; padding: 15px; outline: none; font-size: 16px; }
+        
+        .main-content { display: flex; gap: 20px; flex: 1; overflow: hidden; }
+        .results-area { flex: 1; overflow-y: auto; padding-right: 10px; }
+        .preview-area { flex: 1; background: #cbd5e1; border-radius: 12px; overflow: hidden; display: none; }
+        
+        /* Cards */
+        .result-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid transparent; cursor: pointer; transition: 0.2s; }
+        .result-card:hover { border-left-color: var(--primary); transform: translateX(5px); }
+        .meta { font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
+        .snippet { font-size: 14px; line-height: 1.6; color: #334155; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header class="hero-header">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    <center>PDF → Searchable Knowledge</center>
-                </h1>
-                <p class="hero-subtitle">
-                    <center>Upload PDFs, extract text & images, and search captions or paragraphs.</center>
-                </p>
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-brain"></i>PDF-Searchable Knowledge</div>
+        <div class="upload-section">
+            <p style="font-size: 13px; color: #94a3b8;">Drop Document Here</p>
+            <input type="file" id="fileInput" hidden>
+            <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Select PDF</button>
+            <button id="processBtn" class="btn-upload" style="background:#475569; margin-top:5px;" disabled>Process AI</button>
+        </div>
+        <div id="statusIndicator" style="font-size: 12px; text-align: center; color: #94a3b8;">System Ready</div>
+    </aside>
+
+    <main class="workspace">
+        <div class="stats-container" id="statsRow">
+            <div class="stat-card"><span>Pages</span><b id="stat-pages">-</b></div>
+            <div class="stat-card"><span>Images</span><b id="stat-images">-</b></div>
+            <div class="stat-card"><span>Chars</span><b id="stat-chars">-</b></div>
+        </div>
+
+        <div class="search-bar">
+            <i class="fas fa-search" style="color:#94a3b8"></i>
+            <input type="text" id="searchInput" placeholder="Search the indexed knowledge...">
+        </div>
+
+        <div class="main-content">
+            <div id="searchResults" class="results-area">
+                <div style="text-align:center; padding-top:100px; color:#94a3b8;">
+                    <i class="fas fa-file-import" style="font-size:40px; margin-bottom:15px;"></i>
+                    <p>Upload a PDF to begin semantic indexing.</p>
+                </div>
             </div>
-        </header>
-
-        <main class="main-card">
-            <section class="section upload-section">
-                <h3><i class="fas fa-cloud-upload-alt"></i> Upload PDFs</h3>
-                <div id="dropArea" class="drop-area">
-                    <div class="upload-icon-wrapper">
-                        <i class="fas fa-file-pdf upload-icon"></i>
-                    </div>
-                    <p>Drag & drop PDFs here or click Browse</p>
-                    <button id="browseBtn" class="btn secondary-btn">
-                        <i class="fas fa-folder-open"></i> Browse
-                    </button>
-                    <input id="fileInput" type="file" accept="application/pdf" multiple hidden />
-                </div>
-                <div id="fileList" class="file-list"></div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div id="progressBar" class="progress"></div>
-                    </div>
-                    <div id="statusIndicator" class="status-indicator"></div>
-                </div>
-                <div style="margin-top:12px;">
-                    <button id="processBtn" class="btn primary-btn" disabled>
-                        <i class="fas fa-magic"></i> Process PDFs
-                    </button>
-                </div>
-            </section>
-
-            <section id="processedStats" class="section stats-section" style="display:none;">
-                <h3><i class="fas fa-chart-line"></i> Extraction Stats</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-circle pages-circle">
-                            <span id="totalPages">0</span>
-                        </div>
-                        <p>Pages</p>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-circle chars-circle">
-                            <span id="totalChars">0</span>
-                        </div>
-                        <p>Characters</p>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-circle images-circle">
-                            <span id="totalImages">0</span>
-                        </div>
-                        <p>Images</p>
-                    </div>
-                </div>
-                <div class="full-width toc-item">
-                    <h4>Table of Contents</h4>
-                    <div id="toc" class="toc-content"></div>
-                </div>
-            </section>
-
-            <section class="section search-section">
-                <h3><i class="fas fa-search"></i> Search</h3>
-                <div class="search-input-wrapper">
-                    <input id="searchInput" placeholder="Search by keyword (e.g., 'acknowledgement' or 'Figure 1')" />
-                    <i class="fas fa-search search-icon"></i>
-                </div>
-                <div id="searchResults" class="search-results"></div>
-            </section>
-        </main>
-    </div>
+            <div id="previewArea" class="preview-area">
+                <iframe id="pdfViewer" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </main>
 
     <script src="/static/js/main.js"></script>
 </body>
