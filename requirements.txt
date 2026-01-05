@@ -1,0 +1,35 @@
+# PDF to Searchable Text - Intel Optimized
+# Core dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+python-multipart>=0.0.6
+
+# PDF Processing
+pymupdf>=1.22.0
+pytesseract>=0.3.10
+Pillow>=9.0.0
+
+# Vector Database
+chromadb>=0.4.0
+
+# ML/AI Core
+numpy>=1.24.0
+scikit-learn>=1.2.0
+transformers>=4.35.0
+sentence-transformers>=2.2.0
+
+# Intel OpenVINO Optimization (Highly Recommended)
+# Provides 2-4x faster inference on Intel CPUs
+optimum[openvino]>=1.14.0
+openvino>=2023.2.0
+
+# Optional: Intel OpenVINO GenAI for LLM-based RAG
+# Uncomment to enable LLM answer generation
+# openvino-genai>=2024.0.0
+
+# Optional: Intel Extension for PyTorch (for GPU acceleration)
+# Uncomment if you have Intel GPU
+# intel-extension-for-pytorch>=2.1.0
+
+# Web/UI
+jinja2>=3.1.0
